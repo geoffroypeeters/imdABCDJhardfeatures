@@ -30,7 +30,7 @@
 	- scipy==1.0.1
 	- xmltodict==0.11.0
 
-- ```mpg123````:
+- ```mpg123```:
 	- get mpg123 installed to your platform
 
 - ```imdABCDJ-2.0.0```:
@@ -44,8 +44,7 @@ In ```ircamABCDJhardfeatures.sh```:
 - set the variable ```MPG123``` to the location where ```mpg123``` is installed
 - set the variable ```IMD``` to the location where ````imdABCDJ-2.0.0```` is installed
 - set the variable ```TMP_DIR``` to an existing folder where temporary files can be written
-- set the variable ```IMDHF```to the location of the python script ```ircamABCDJhardfeatures.py
-```	
+- set the variable ```IMDHF```to the location of the python script ```ircamABCDJhardfeatures.py```
 
 ## Usage
 
