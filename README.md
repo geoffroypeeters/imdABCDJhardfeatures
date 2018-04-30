@@ -7,37 +7,66 @@
 **Description**: A python package to compute TU-Berlin Hard Features as defined in the ABC_DJ H2020 Project (imd stands for Ircam Music Description).
 
 
-## Content
+## Usage 1 (Production)
 
-- imdABCDJhardfeatures.sh: 
-	- a bash script that perform mp3 decoding, call C++ executable, call python scripts
+### Content
 
-- imdABCDJhardfeatures.py
+- ```imdABCDJhardfeatures.py```
 	- main python script that extract all TU-berlin Hard Features
-- peeaudiolight.py
+- ```peeaudiolight.py```
 	- set of functions to extract HPSS related features
-- peeTimbreToolbox.py
+- ```peeTimbreToolbox.py```
 	- python version of the TimbreToolbox
-- my_tools.py
+- ```my_tools.py```
 	- set of tools used by the python version of the TimbreToolbox
-- swipep.py
+- ```swipep.py```
 	- fundamental frequency estimation used by the python version of the TimbreToolbox
 
-## Requirements
+### Requirements
 
 - Python 2.7.14
 	- numpy==1.14.3
 	- scipy==1.0.1
 	- xmltodict==0.11.0
 
+### Usage
+
+For production, the python script ```imdABCDJhardfeatures.py``` should be used directly. 
+It takes as inputs
+	
+- ```InFullPathToWavFile```: the full path to the decompressed audio file (wav file)
+- ```InFullPathToXmlFile```: the full path to the XML file as outputed by the C++ executable ```imdABCDJ-2.0.0```
+- ```OutFullPathToJsonFile ```: the full path to the JSON file in which the results will be written
+- ```TmpDir```: an existing folder where temporary results will be written
+
+The command line is then
+
+	imdABCDJhardfeatures.py -a $InFullPathToWavFile -x $InFullPathToXmlFile -o $OutFullPathToJsonFile --tmpdir $TmpDir
+
+
+
+
+## Usage 2 (Testing)
+
+### Content
+
+Same as above plus
+
+- ```imdABCDJhardfeatures.sh```: 
+	- a bash script that perform mp3 decoding, call C++ executable, call python scripts
+
+
+### Requirements
+
+Same as above plus
+
 - ```mpg123```:
-	- get mpg123 installed to your platform
+	- to perform mp3 decoding and conversion to wav file
 
 - ```imdABCDJ-2.0.0```:
-	- proprietary C++ executable from IRCAM that extract beat, key, chord, tags
-	- In ircamABCDJhardfeatures.sh, 
+	- proprietary C++ executable from IRCAM that extract beat, key, chord, structure, Heardis-tags
 
-## Configuration
+### Configuration
 
 In ```ircamABCDJhardfeatures.sh```: 
 
@@ -46,25 +75,12 @@ In ```ircamABCDJhardfeatures.sh```:
 - set the variable ```TMP_DIR``` to an existing folder where temporary files can be written
 - set the variable ```IMDHF```to the location of the python script ```ircamABCDJhardfeatures.py```
 
-## Usage
+### Usage
 
-### Usage 1
-
-As an example, we provide a bash script ```ircamABCDJhardfeatures.sh ``` as example.
+As an example, we provide the bash script ```ircamABCDJhardfeatures.sh ``` which is simply used as
 	
-	ircamABCDJhardfeatures.sh fullPathToAudioFile
+	ircamABCDJhardfeatures.sh $InFullPathToAudioFile
 
-### Usage 2
+In this script, the  variables ```InFullPathToWavFile```, ```InFullPathToXmlFile```,  ```OutFullPathToJsonFile``` are automatically derived from ```InFullPathToAudioFile````.
 
-For production, the python script ```imdABCDJhardfeatures.py``` should be used directly. 
-This pytho script takes as inputs
-	
-- ```fullPathToWavFile```: the full path to the decompressed audio file (wav file)
-- ```fullPathToXmlFile```: the full path to the XML file as outputed by the C++ executable ```imdABCDJ-2.0.0```
-- ```fullPathJsonFile```: the full path to the JSON file in which the results will be written
-- ```TmpDir```: an existing folder where temporary results will be written
-
-The command line is then
-
-	imdABCDJhardfeatures.py -a $fullPathToWavFile -x $fullPathToXmlFile -o $fullPathJsonFile --tmpdir $TmpDir
 
