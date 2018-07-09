@@ -142,6 +142,9 @@ def F_computeTimbre(audioFile, outTTBFile, myResult):
 
     descHub_d = peeTimbreToolbox.F_load(outTTBFile)
 
+    # --- 2018/07/09: remove pickle file (request from Stefano)
+    os.remove(outTTBFile)
+
     if True:
 
         map1_d = {'TTT': 'TEE', 'TTF': 'ERBfft', 'TTG': 'ERBgam', 'TTH': 'Harmonic', 'TTM': 'STFTmag', 'TTP': 'STFTpow'}

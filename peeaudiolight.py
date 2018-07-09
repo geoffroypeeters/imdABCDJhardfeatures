@@ -46,7 +46,7 @@ import cPickle as pickle
 #import ipdb
 import math
 from scipy.ndimage import median_filter
-
+import ipdb
 
 
 
@@ -296,6 +296,10 @@ class C_AudioAnalysis(C_Descriptor):
         assert(audioFile.endswith('wav')), "file '%s' must be a .wav file" % (audioFile)
 
         sr_hz, data_v = scipy.io.wavfile.read(audioFile)
+
+        # --- 2018/07/09: to speed up computation: only consider first 30sec
+        data_v = data_v[:30*sr_hz, :]
+
         # --- data_v (LT_n, nbChannel)
         data_v = data_v / 32767.0
 
@@ -312,6 +316,7 @@ class C_AudioAnalysis(C_Descriptor):
 
         # --- convert to data_v (nbChannel, LT_n)
         data_v = data_v.T
+
 
         # --- C_Descriptor.__init__(self, audioFile, data_v, 'Time [sec]', sr_hz, 0., 'Audio-value', 1., 0.)
         C_Descriptor.__init__(self, 'audio', data_v, 'Time [sec]', sr_hz, 0., 'Audio-value', 1., 0.)
