@@ -298,7 +298,7 @@ class C_AudioAnalysis(C_Descriptor):
         sr_hz, data_v = scipy.io.wavfile.read(audioFile)
 
         # --- 2018/07/09: to speed up computation: only consider first 30sec
-        data_v = data_v[:30*sr_hz, :]
+        #data_v = data_v[:10*sr_hz, :]
 
         # --- data_v (LT_n, nbChannel)
         data_v = data_v / 32767.0

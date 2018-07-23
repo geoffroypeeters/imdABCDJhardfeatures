@@ -50,7 +50,7 @@ desc_settings = namedtuple("desc_settings", "b_AS b_TEE b_TEE_global b_STFTmag b
 dPart = namedtuple("dPart", "f_Freq_v f_Ampl_v");
 config_s = desc_settings(
 # descriptors from the Audio Signal
-b_AS = 1,
+b_AS = 0,
 # descriptors from the Temporal Energy Envelope
 b_TEE = 1,
 # compute Log-Attack-Time, ...
@@ -60,11 +60,11 @@ b_STFTmag = 1,
 # descriptors from the STFT power
 b_STFTpow = 1,
 # descriptors from Harmonic Sinusoidal Modeling representation
-b_Harmonic = 1,
+b_Harmonic = 0,
 # descriptors from ERB representation (ERB being computed using FFT)
-b_ERBfft = 1,
+b_ERBfft = 0,
 # descriptors from ERB representation (ERB being computed using Gamma Tone Filter)
-b_ERBgam = 1,
+b_ERBgam = 0,
 # === defines the number of auto-correlation coefficients that will be sued
 xcorr_nb_coeff = 12,
 # === defines the threshold [0,1] below which harmonic-features are not computed
@@ -219,36 +219,63 @@ def F_computeAllDescriptor(audio_v, sr_hz):
 
     descHub_d = {}
 
+    import time
+
     """ 1) descriptors from the Temporal Energy Envelope (do_s.b_TEE=1)  [OK] """
     if config_s.b_AS:
+        t = time.time()
         descHub_d['AS'] = F_computeDescriptorSignal(audio_v, sr_hz)
+        print("F_computeDescriptorSignal\t%f" % (time.time() - t))
+
     if config_s.b_TEE:
+        t = time.time()
         descHub_d['TEE'] = F_computeDescriptorEnv(audio_v, sr_hz)
+        print("F_computeDescriptorEnv\t%f" % (time.time() - t))
 
     """ 2) descriptors from the STFT magnitude and STFT power (do_s.b_STFTmag= 1) """
     if (config_s.b_STFTmag or config_s.b_STFTpow):
+        t = time.time()
         S_mag, S_pow, i_SizeX, i_SizeY, f_SupX_v, f_SupY_v = F_representationFft(audio_v, sr_hz)
+        print("F_representationFft\t%f" % (time.time() - t))
+
     if config_s.b_STFTmag:
+        t = time.time()
         descHub_d['STFTmag'] = F_computeDescriptorSpectrum(S_mag, i_SizeX, i_SizeY, f_SupX_v, f_SupY_v)
+        print("F_computeDescriptorSpectrum\t%f" % (time.time() - t))
+
     if config_s.b_STFTpow:
+        t = time.time()
         descHub_d['STFTpow'] = F_computeDescriptorSpectrum(S_pow, i_SizeX, i_SizeY, f_SupX_v, f_SupY_v)
+        print("F_computeDescriptorSpectrum\t%f" % (time.time() - t))
 
     """ 3) descriptors from Harmonic Sinusoidal Modeling representation (do_s.b_Harmonic=1) """
     if config_s.b_Harmonic:
+        t = time.time()
         f0_hz_v, f_DistrPts_m, PartTrax_s = F_representationHarmonic(audio_v, sr_hz)
+        print("F_representationHarmonic\t%f" % (time.time() - t))
+
+        t = time.time()
         descHub_d['Harmonic'] = F_computeDescriptorHarmonic(f0_hz_v, f_DistrPts_m, PartTrax_s)
+        print("F_computeDescriptorHarmonic\t%f" % (time.time() - t))
 
     #m = scipy.io.loadmat('sig_erb.mat');
     #trame_s = np.squeeze(m['f_Sig_v']);
 
     """ 4) descriptors from ERB representation (ERB being computed using FFT) """
     if (config_s.b_ERBfft or config_s.b_ERBgam):
+        t = time.time()
         S_erb, S_gam, i_SizeX1, i_SizeY1, f_SupX_v1, f_SupY_v1, i_SizeX2, i_SizeY2, f_SupX_v2, f_SupY_v2 = F_representationERB(audio_v, sr_hz)
+        print("F_representationERB\t%f" % (time.time() - t))
 
     if config_s.b_ERBfft:
+        t = time.time()
         descHub_d['ERBfft'] = F_computeDescriptorSpectrum(S_erb, i_SizeX1, i_SizeY1, f_SupX_v1, f_SupY_v1)
+        print("F_computeDescriptorSpectrum\t%f" % (time.time() - t))
+
     if config_s.b_ERBgam:
+        t = time.time()
         descHub_d['ERBgam'] = F_computeDescriptorSpectrum(S_gam, i_SizeX2, i_SizeY2, f_SupX_v2, f_SupY_v2)
+        print("F_computeDescriptorSpectrum\t%f" % (time.time() - t))
 
     return descHub_d
 
@@ -263,7 +290,7 @@ def F_computeDescriptorEnv(audio_v, sr_hz, do_Global=True):
         @param
         @return
     """
-    print "F_computeDescriptorEnv"
+    #print "F_computeDescriptorEnv"
 
     sr_hz = float(sr_hz)
     Fc = 5.0
@@ -325,7 +352,7 @@ def F_computeDescriptorSignal(audio_v, sr_hz):
         @param
         @return
     """
-    print "F_computeDescriptorSignal"
+    #print "F_computeDescriptorSignal"
 
     f_hopSize_sec = 128.0/44100         # === is 0.0029s at 44100Hz
     f_winLen_sec = 1024.0/44100         # === is 0.0232s at 44100Hz
@@ -371,7 +398,7 @@ def F_computeDescriptorSpectrum( f_DistrPts_m, i_SizeX, i_SizeY, f_SupX_v, f_Sup
         @param
         @return
     """
-    print "F_computeDescriptorSpectrum"
+    #print "F_computeDescriptorSpectrum"
 
     # --- f_DistrPts_m (i_SizeY=N, i_SizeX=nbFrame)
 
@@ -468,7 +495,7 @@ def F_computeDescriptorHarmonic(f_F0_v, f_DistrPts_m, PartTrax_s):
         @return
     """
 
-    print "F_computeDescriptorHarmonic"
+    #print "F_computeDescriptorHarmonic"
 
     i_Offset = 0
     i_EndFrm = len(PartTrax_s)
@@ -631,7 +658,7 @@ def F_representationFft(audio_v, sr_hz):
     """
     """
 
-    print "F_representationFft"
+    #print "F_representationFft"
 
     #i_FFTSize    = 2048;
     f_WinSize_sec = 1025./44100.
@@ -696,7 +723,7 @@ def F_representationHarmonic(f_Sig_v, Fs):
         @return
     """
 
-    print "F_representationHarmonic"
+    #print "F_representationHarmonic"
 
     f0_hz_v = []
     PartTrax_s = []
@@ -813,7 +840,7 @@ def F_representationERB(f_Sig_v, Fs):
         @return
     """
 
-    print "F_representationERB"
+    #print "F_representationERB"
 
     f_HopSize_sec = 256./44100.
     i_HopSize = f_HopSize_sec * Fs

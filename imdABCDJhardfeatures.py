@@ -159,21 +159,22 @@ def F_computeTimbre(audioFile, outTTBFile, myResult):
             descriptor = map2_d[nom[4:6]]
             temporalModeling = map3_d[nom[6:]]
             num = 0
-            print("%s -> %s/%s/%s/%d" % (nom, family, descriptor, temporalModeling, num))
+            #print("%s -> %s/%s/%s/%d" % (nom, family, descriptor, temporalModeling, num))
             myResult[nom] = descHub_d[family][descriptor][temporalModeling][num]
 
         nom_d = ['TTA_01mi', 'TTA_01ma', 'TTA_02ma', 'TTA_02me', 'TTA_08mi', 'TTA_08me', 'TTA_12mi', 'TTA_12ma']
+        nom_d = []
         for nom in nom_d:
             family = 'AS'
             descriptor = 'AutoCorr'
             temporalModeling = map3_d[nom[6:]]
             num = int(nom[4:6])-1
-            print("%s -> %s/%s/%s/%d" % (nom, 'AS', 'AutoCorr', temporalModeling, num))
+            #print("%s -> %s/%s/%s/%d" % (nom, 'AS', 'AutoCorr', temporalModeling, num))
             myResult[nom] = descHub_d[family][descriptor][temporalModeling][num]
 
-        nom_d = ['TTF_Sdme', 'TTF_Svma', 'TTF_Svme', 'TTF_Femi', 'TTF_Fema', 'TTF_Feme', 'TTF_Fest', 'TTF_Sfme',
-                    'TTG_Fema', 'TTG_Feme', 'TTG_Fest', 'TTG_Skst', 'TTG_Ssme', 'TTG_Svmi', 'TTG_Swme', 'TTG_Swst',
-                    'TTH_Heme', 'TTH_Noma', 'TTH_Nome', 'TTH_Nost', 'TTH_F0st', 'TTH_Ihma', 'TTH_Ihst', 'TTH_Scmi', 'TTH_Scst', 'TTH_Slma', 'TTH_Slme', 'TTH_Slmi', 'TTH_Slst', 'TTH_Svme', 'TTH_Svst', 'TTH_Swmi', 'TTH_T3me', 'TTH_T3st', 'TTH_Hdma', 'TTH_Hdme',
+        nom_d = [#'TTF_Sdme', 'TTF_Svma', 'TTF_Svme', 'TTF_Femi', 'TTF_Fema', 'TTF_Feme', 'TTF_Fest', 'TTF_Sfme',
+                    #'TTG_Fema', 'TTG_Feme', 'TTG_Fest', 'TTG_Skst', 'TTG_Ssme', 'TTG_Svmi', 'TTG_Swme', 'TTG_Swst',
+                    #'TTH_Heme', 'TTH_Noma', 'TTH_Nome', 'TTH_Nost', 'TTH_F0st', 'TTH_Ihma', 'TTH_Ihst', 'TTH_Scmi', 'TTH_Scst', 'TTH_Slma', 'TTH_Slme', 'TTH_Slmi', 'TTH_Slst', 'TTH_Svme', 'TTH_Svst', 'TTH_Swmi', 'TTH_T3me', 'TTH_T3st', 'TTH_Hdma', 'TTH_Hdme',
                     'TTM_Fema', 'TTM_Feme', 'TTM_Fest', 'TTM_Scme', 'TTM_Sdmi', 'TTM_Sfma', 'TTM_Skme', 'TTM_Slme', 'TTM_Srme', 'TTM_Srst', 'TTM_Ssme', 'TTM_Ssmi', 'TTM_Stma', 'TTM_Stmi',
                     'TTP_Fema', 'TTP_Femi', 'TTP_Fest', 'TTP_Sdst', 'TTP_Sfme', 'TTP_Slme', 'TTP_Srmi', 'TTP_Ssmi', 'TTP_Stmi', 'TTP_Stst', 'TTP_Svmi', 'TTP_Swst']
         for nom in nom_d:
@@ -181,7 +182,7 @@ def F_computeTimbre(audioFile, outTTBFile, myResult):
             descriptor = map2_d[nom[4:6]]
             temporalModeling = map3_d[nom[6:]]
             num = 0
-            print("%s -> %s/%s/%s/%d" % (nom, family, descriptor, temporalModeling, num))
+            #print("%s -> %s/%s/%s/%d" % (nom, family, descriptor, temporalModeling, num))
             myResult[nom] = descHub_d[family][descriptor][temporalModeling][num]
 
     else:
@@ -627,6 +628,9 @@ def F_computeOneFile(audioFileFull='', audioFileExtract='', xmlFile='', startExt
         Compute features for a single (pair of) audioFile (full duration and extract)
     """
 
+    import time
+    t = time.time()
+
     myResult = OrderedDict()
     myHarmonicInformation = C_harmonicInformation()
 
@@ -698,7 +702,9 @@ def F_computeOneFile(audioFileFull='', audioFileExtract='', xmlFile='', startExt
 
     """ HPSS """
     L1 = 4096./44100.
+    tt = time.time()
     myResult['DecSinus'], myResult['DecNoise'], myResult['DecTrans'] = peeaudiolight.C_AudioAnalysis(data_d['audioFile'], do_stereo2mono=True).M_frameAnalysis(window_shape="blackman", L_sec=L1, STEP_sec=L1/4., ).M_cplxFft(zp_factor=1).M_fitzGerald(L_sec=0.08, STEP_sec=0.02)
+    print("HPSS %f\n" % (time.time() - tt))
 
     myResult['Sharpness_Mean'] = float(data_d['jsonData']['musicdescription']['global']['lowleveltype'][6]['#text'])
     myResult['Sharpness_SD'] = float(data_d['jsonData']['musicdescription']['global']['lowleveltype'][7]['#text'])
@@ -720,6 +726,8 @@ def F_computeOneFile(audioFileFull='', audioFileExtract='', xmlFile='', startExt
         jsonFile = data_d['jsonFile']
     with open(jsonFile, 'w') as fid:
         json.dump(myResult, fid, indent=4)
+
+    print("F_computeOneFile\t%f" % (time.time() - t))
 
     return
 
