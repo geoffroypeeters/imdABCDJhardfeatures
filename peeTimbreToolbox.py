@@ -297,6 +297,11 @@ def F_computeDescriptorEnv(audio_v, sr_hz, do_Global=True):
     f_ThreshNoise = 0.15
     #trame_s = trame_s / (np.max(trame_s) + EPS);  # normalize input sound
 
+    """ horrible hack to avoid big prime factors in FFT """
+    hacked_size = np.round(np.ceil(audio_v.size / sr_hz) * sr_hz)
+    if hacked_size > audio_v.size :
+      audio_v = np.append(audio_v, np.zeros(hacked_size - audio_v.size))
+
     """ compute signal enveloppe (Ok) """
     f_AnaSig_v = scipy.signal.hilbert(audio_v)    # analytic signal
     f_AmpMod_v = abs(f_AnaSig_v)                  # amplitude modulation of analytic signal
