@@ -40,6 +40,7 @@ import getopt
 import time
 #import ipdb
 
+import math # for trunc
 
 #import matplotlib.pyplot as plt
 
@@ -298,7 +299,7 @@ def F_computeDescriptorEnv(audio_v, sr_hz, do_Global=True):
     #trame_s = trame_s / (np.max(trame_s) + EPS);  # normalize input sound
 
     """ horrible hack to avoid big prime factors in FFT """
-    hacked_size = np.round(np.ceil(audio_v.size / sr_hz) * sr_hz)
+    hacked_size = math.trunc(np.ceil(audio_v.size / sr_hz) * sr_hz)
     if hacked_size > audio_v.size :
       audio_v = np.append(audio_v, np.zeros(hacked_size - audio_v.size))
 
